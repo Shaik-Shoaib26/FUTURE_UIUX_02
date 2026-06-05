@@ -64,8 +64,8 @@ export function Confirmation() {
             <div className="flex items-center space-x-3">
               <MapPin className="text-primary opacity-70" size={20} />
               <div>
-                <p className="font-bold text-slate-800">123 Beauty Ave</p>
-                <p className="text-xs text-slate-500">New York, NY 10001</p>
+                <p className="font-bold text-slate-800">Hindupur, Andhra Pradesh</p>
+                <p className="text-xs text-slate-500">Hindupur, Andhra Pradesh</p>
               </div>
             </div>
           </div>

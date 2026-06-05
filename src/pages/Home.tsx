@@ -24,7 +24,7 @@ export function Home() {
 
         <div className="flex items-center space-x-2 text-slate-500 mb-8 max-w-[200px]">
           <MapPin size={16} />
-          <span className="text-sm truncate">123 Beauty Ave, NY</span>
+          <span className="text-sm truncate">Hindupur, Andhra Pradesh</span>
         </div>
 
         <div className="absolute -bottom-7 left-6 right-6 md:max-w-md md:left-12">
