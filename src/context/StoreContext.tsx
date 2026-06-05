@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { Appointment, mockAppointments } from '../data/mockData';
+import { Appointment } from '../data/mockData';
 
 type User = {
   name: string;
@@ -28,7 +28,7 @@ const USERS_KEY = 'glownflow_users';
 const CURRENT_USER_KEY = 'glownflow_current_user';
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [appointments, setAppointments] = useState<Appointment[]>(mockAppointments);
+  const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [users, setUsers] = useState<User[]>(() => {
     const stored = localStorage.getItem(USERS_KEY);
     return stored ? JSON.parse(stored) : [];

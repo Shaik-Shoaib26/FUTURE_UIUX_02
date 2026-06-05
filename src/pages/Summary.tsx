@@ -7,8 +7,6 @@ import { format } from 'date-fns';
 export function Summary() {
   const { serviceId, specialistId, date } = useParams();
   const navigate = useNavigate();
-  const { addAppointment } = useStore();
-
   const service = services.find(s => s.id === serviceId);
   const specialist = specialists.find(s => s.id === specialistId);
 
@@ -20,15 +18,14 @@ export function Summary() {
   const timeString = decodedDateParts[1] || '09:00 AM';
 
   const handlePayment = () => {
-    // In real flow, go to payment. Here we just book and confirm or go to dummy payment screen.
-    addAppointment({
-      serviceId: service.id,
-      specialistId: specialist.id,
-      date: dateObj.toISOString(),
-      status: 'upcoming',
-      price: service.price,
+    navigate('/book/payment', {
+      state: {
+        serviceId: service.id,
+        specialistId: specialist.id,
+        date: dateObj.toISOString(),
+        price: service.price,
+      },
     });
-    navigate('/book/payment');
   };
 
   return (

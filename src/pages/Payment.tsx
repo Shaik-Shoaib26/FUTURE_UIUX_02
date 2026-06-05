@@ -1,19 +1,44 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, CreditCard, Apple, Wallet } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { ChevronLeft, CreditCard, Apple, DollarSign } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
+import { useStore } from '../context/StoreContext';
+
+type PaymentState = {
+  serviceId: string;
+  specialistId: string;
+  date: string;
+  price: number;
+};
 
 export function Payment() {
   const navigate = useNavigate();
-  const [selectedMethod, setSelectedMethod] = useState<'card' | 'apple' | 'wallet'>('card');
+  const location = useLocation();
+  const { addAppointment } = useStore();
+  const [selectedMethod, setSelectedMethod] = useState<'card' | 'apple' | 'phonepe' | 'googlepay' | 'paytm' | 'cash'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
+  const pendingAppointment = location.state as PaymentState | null;
+
+  useEffect(() => {
+    if (!pendingAppointment) {
+      navigate('/home', { replace: true });
+    }
+  }, [pendingAppointment, navigate]);
 
   const handlePay = () => {
+    if (!pendingAppointment) return;
     setIsProcessing(true);
     setTimeout(() => {
+      addAppointment({
+        serviceId: pendingAppointment.serviceId,
+        specialistId: pendingAppointment.specialistId,
+        date: pendingAppointment.date,
+        status: 'upcoming',
+        price: pendingAppointment.price,
+      });
       navigate('/book/confirmation', { replace: true });
-    }, 2000);
+    }, 1200);
   };
 
   return (
@@ -52,33 +77,86 @@ export function Payment() {
           >
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-800">
-                <svg viewBox="0 0 24 24" className="w-6 h-6 fill-current"><path d="M12 2A10 10 0 0 0 2 12a10 10 0 0 0 10 10 10 10 0 0 0 10-10A10 10 0 0 0 12 2z" opacity="0.1"/><path d="M15.4 17.5c-1 1.4-2.2 2.6-3.8 2.6-1.5 0-2.3-1-4-1-1.8 0-2.6 1-4 1-1.3 0-2.8-1.5-3.8-3C-2 11.2.6 5.8 4 5.8c1.6 0 2.8 1 4 1 1.2 0 3-1.3 4.8-1 2 .4 3.4 1.8 4 3-1.8 1-2.4 3-1 4.8 1 1.6 2.6 2 3.8 2.2-.4 1.4-1.2 2.8-2.2 4.2zM12.8 5.6C12.8 3.5 14.5 2 16.4 2c.2 2-1 4-3 4-.2 0-.4-.2-.6-.4z"/></svg>
+                <Apple size={20} />
               </div>
               <span className="font-medium text-slate-800">Apple Pay</span>
             </div>
-            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'apple' ? "border-primary" : "border-slate-300")}>
+            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'apple' ? "border-primary" : "border-slate-300")}> 
               {selectedMethod === 'apple' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setSelectedMethod('phonepe')}
+            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'phonepe' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-primary font-bold">PP</div>
+              <span className="font-medium text-slate-800">PhonePe</span>
+            </div>
+            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'phonepe' ? "border-primary" : "border-slate-300")}> 
+              {selectedMethod === 'phonepe' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setSelectedMethod('googlepay')}
+            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'googlepay' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-700 font-bold">G</div>
+              <span className="font-medium text-slate-800">Google Pay</span>
+            </div>
+            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'googlepay' ? "border-primary" : "border-slate-300")}> 
+              {selectedMethod === 'googlepay' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setSelectedMethod('paytm')}
+            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'paytm' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-700 font-bold">PT</div>
+              <span className="font-medium text-slate-800">Paytm</span>
+            </div>
+            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'paytm' ? "border-primary" : "border-slate-300")}> 
+              {selectedMethod === 'paytm' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+            </div>
+          </button>
+
+          <button 
+            onClick={() => setSelectedMethod('cash')}
+            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'cash' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
+          >
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-700">
+                <DollarSign size={20} />
+              </div>
+              <span className="font-medium text-slate-800">Cash</span>
+            </div>
+            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'cash' ? "border-primary" : "border-slate-300")}> 
+              {selectedMethod === 'cash' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
             </div>
           </button>
         </div>
 
-        {selectedMethod === 'card' && (
-          <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-1">Card Number</label>
-              <input type="text" placeholder="0000 0000 0000 0000" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 text-slate-800" />
+        {['phonepe', 'googlepay', 'paytm'].includes(selectedMethod) && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 space-y-3">
+            <p className="text-slate-600 text-sm font-medium">UPI payment selected.</p>
+            <p className="text-slate-500 text-sm">Use your UPI app to pay with the QR code or UPI ID below.</p>
+            <div className="rounded-2xl bg-slate-50 p-4 text-center text-slate-700">
+              <p className="text-xs uppercase tracking-[0.3em] text-slate-400 mb-2">UPI ID</p>
+              <p className="font-semibold text-slate-800">glownflow@upi</p>
             </div>
-            <div className="flex space-x-4">
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">Expiry</label>
-                <input type="text" placeholder="MM/YY" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 text-slate-800" />
-              </div>
-              <div className="flex-1">
-                <label className="block text-sm font-medium text-slate-700 mb-1">CVC</label>
-                <input type="text" placeholder="123" className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 text-slate-800" />
-              </div>
-            </div>
-          </motion.div>
+          </div>
+        )}
+
+        {selectedMethod === 'cash' && (
+          <div className="rounded-3xl border border-slate-200 bg-white p-5 space-y-3">
+            <p className="text-slate-600 text-sm font-medium">Cash payment selected.</p>
+            <p className="text-slate-500 text-sm">Pay cash directly at the salon when you arrive.</p>
+          </div>
         )}
       </div>
 
