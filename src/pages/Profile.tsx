@@ -1,9 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { User, Settings, CreditCard, Bell, HelpCircle, LogOut, ChevronRight, Gift } from 'lucide-react';
 import { motion } from 'motion/react';
+import { useStore } from '../context/StoreContext';
 
 export function Profile() {
   const navigate = useNavigate();
+  const { currentUser, logout } = useStore();
 
   return (
     <div className="flex flex-col min-h-full">
@@ -15,8 +17,8 @@ export function Profile() {
              <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" alt="Sarah" className="w-full h-full object-cover rounded-full" />
           </div>
           <div className="text-slate-800">
-            <h2 className="text-xl font-bold">Sarah Jenkins</h2>
-            <p className="text-slate-500 text-sm">sarah@example.com</p>
+            <h2 className="text-xl font-bold">{currentUser?.name ?? 'Sarah Jenkins'}</h2>
+            <p className="text-slate-500 text-sm">{currentUser?.email ?? 'sarah@example.com'}</p>
           </div>
         </div>
       </div>
@@ -51,7 +53,7 @@ export function Profile() {
 
         <motion.button 
           initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }}
-          onClick={() => navigate('/auth')}
+          onClick={() => { logout(); navigate('/auth'); }}
           className="w-full bg-white/80 backdrop-blur-md rounded-[28px] shadow-sm hover:shadow-md border border-gray-100 overflow-hidden p-5 flex items-center justify-between text-rose-500 active:scale-95 transition"
         >
           <div className="flex items-center space-x-3">

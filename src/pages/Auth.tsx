@@ -1,15 +1,44 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Sparkles } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { useStore } from '../context/StoreContext';
 
 export function Auth() {
   const [isLogin, setIsLogin] = useState(true);
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [message, setMessage] = useState<string>('');
   const navigate = useNavigate();
+  const { login, signup, currentUser } = useStore();
+
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/home');
+    }
+  }, [currentUser, navigate]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    setMessage('');
+
+    if (isLogin) {
+      const result = login(email, password);
+      if (!result.success) {
+        setMessage(result.message);
+        return;
+      }
+      navigate('/home');
+      return;
+    }
+
+    const result = signup(name, email, password);
+    if (!result.success) {
+      setMessage(result.message);
+      return;
+    }
     navigate('/home');
   };
 
@@ -42,18 +71,61 @@ export function Auth() {
         {!isLogin && (
           <div>
             <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
-            <input type="text" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition" placeholder="John Doe" required={!isLogin} />
+            <input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+              placeholder="John Doe"
+              required={!isLogin}
+            />
           </div>
         )}
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Email</label>
-          <input type="email" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition" placeholder="john@example.com" required />
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+            placeholder="john@example.com"
+            required
+          />
         </div>
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
-          <input type="password" className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition" placeholder="••••••••" required />
+          <input
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full bg-slate-50 border border-slate-200 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition"
+            placeholder="••••••••"
+            required
+          />
         </div>
-        
+        {message && (
+          <div className="rounded-xl bg-rose-50 border border-rose-100 text-rose-700 px-4 py-3 text-sm">
+            {message}
+            {message.includes('sign up') && (
+              <button
+                type="button"
+                onClick={() => setIsLogin(false)}
+                className="ml-2 font-semibold text-primary underline"
+              >
+                Sign up now
+              </button>
+            )}
+            {message.includes('login instead') && (
+              <button
+                type="button"
+                onClick={() => setIsLogin(true)}
+                className="ml-2 font-semibold text-primary underline"
+              >
+                Login instead
+              </button>
+            )}
+          </div>
+        )}
         <button type="submit" className="w-full bg-primary text-white py-4 rounded-xl font-bold shadow-lg shadow-primary/30 mt-4 hover:bg-primary-600 transition active:scale-[0.98]">
           {isLogin ? 'Login' : 'Create Account'}
         </button>

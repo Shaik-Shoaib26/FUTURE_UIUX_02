@@ -3,10 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, ChevronRight, Star } from 'lucide-react';
 import { categories, services, specialists } from '../data/mockData';
 import { motion } from 'motion/react';
+import { useStore } from '../context/StoreContext';
 
 export function Home() {
   const navigate = useNavigate();
   const [search, setSearch] = useState('');
+  const { currentUser } = useStore();
 
   return (
     <div className="flex flex-col pb-20">
@@ -14,7 +16,7 @@ export function Home() {
       <div className="bg-white/40 backdrop-blur-md border-b border-gray-200/50 px-6 md:px-12 pt-12 pb-24 rounded-b-[40px] relative">
         <div className="flex justify-between items-center mb-6">
           <div>
-            <p className="text-slate-500 text-sm mb-1">Good morning, Sarah</p>
+            <p className="text-slate-500 text-sm mb-1">Good morning, {currentUser?.name ?? 'Sarah'}</p>
             <h1 className="text-slate-800 text-2xl font-extrabold tracking-tight">Ready to glow?</h1>
           </div>
           <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
