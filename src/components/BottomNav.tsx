@@ -1,6 +1,7 @@
 import { Home, Calendar, Bell, User } from 'lucide-react';
 import { NavLink } from 'react-router-dom';
 import { cn } from '../lib/utils';
+import { Logo } from './Logo';
 
 export function Navigation() {
   return (
@@ -18,10 +19,7 @@ export function Navigation() {
       {/* Desktop Side Nav */}
       <nav className="hidden md:flex flex-col fixed left-0 top-0 bottom-0 w-64 bg-white/80 backdrop-blur-md border-r border-slate-100 z-50 p-6">
         <div className="flex items-center gap-3 mb-10">
-          <div className="w-10 h-10 bg-gradient-to-tr from-[#6D28D9] to-[#F9A8D4] rounded-xl flex items-center justify-center shadow-lg">
-            <span className="text-white font-bold text-xl">G</span>
-          </div>
-          <h1 className="text-2xl font-extrabold tracking-tight text-[#1E293B]">Glow <span className="text-[#6D28D9] font-medium">&</span> Flow</h1>
+          <Logo compact />
         </div>
         <div className="flex flex-col gap-2">
            <DesktopNavItem to="/home" icon={Home} label="Dashboard" />

@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Sparkles } from 'lucide-react';
+import { Logo } from '../components/Logo';
 
 export function Splash() {
   const navigate = useNavigate();
@@ -21,11 +21,10 @@ export function Splash() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="flex flex-col items-center text-white"
       >
-        <div className="bg-white/20 p-6 rounded-3xl backdrop-blur-md mb-6 shadow-2xl">
-          <Sparkles size={64} className="text-white" strokeWidth={1.5} />
+        <div className="bg-white/10 p-6 rounded-[32px] backdrop-blur-md mb-6 shadow-2xl border border-white/20">
+          <Logo />
         </div>
-        <h1 className="text-4xl font-bold tracking-tight mb-2">Glow & Flow</h1>
-        <p className="text-primary-100 font-medium">Premium Salon & Spa</p>
+        <p className="text-primary-100 font-medium mt-4">Premium Salon & Spa</p>
       </motion.div>
     </div>
   );
