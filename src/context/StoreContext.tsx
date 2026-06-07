@@ -26,9 +26,13 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 const USERS_KEY = 'glownflow_users';
 const CURRENT_USER_KEY = 'glownflow_current_user';
+const APPOINTMENTS_KEY = 'glownflow_appointments';
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [appointments, setAppointments] = useState<Appointment[]>([]);
+  const [appointments, setAppointments] = useState<Appointment[]>(() => {
+    const stored = localStorage.getItem(APPOINTMENTS_KEY);
+    return stored ? JSON.parse(stored) : [];
+  });
   const [users, setUsers] = useState<User[]>(() => {
     const stored = localStorage.getItem(USERS_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -43,6 +47,10 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [users]);
 
   useEffect(() => {
+    localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appointments));
+  }, [appointments]);
+
+  useEffect(() => {
     if (currentUser) {
       localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(currentUser));
     } else {
@@ -51,14 +59,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [currentUser]);
 
   const addAppointment = (appointment: Omit<Appointment, 'id'>) => {
-    const newAppointment = { ...appointment, id: `a${Date.now()}` };
+    const newAppointment = { ...appointment, id: `a${Date.now()}`, userEmail: currentUser?.email ?? 'guest' };
     setAppointments((prev) => [...prev, newAppointment]);
   };
 
   const cancelAppointment = (id: string) => {
-    setAppointments((prev) =>
-      prev.map((app) => (app.id === id ? { ...app, status: 'cancelled' } : app))
-    );
+    setAppointments((prev) => prev.map((app) => (app.id === id ? { ...app, status: 'cancelled' } : app)));
   };
 
   const login = (email: string, password: string): AuthResult => {
@@ -96,7 +102,7 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider
       value={{
-        appointments,
+        appointments: appointments.filter((a) => a.userEmail === currentUser?.email),
         addAppointment,
         cancelAppointment,
         currentUser,

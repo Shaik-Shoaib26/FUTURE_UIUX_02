@@ -35,6 +35,7 @@ export type Appointment = {
   date: string; // ISO string
   status: 'upcoming' | 'completed' | 'cancelled';
   price: number;
+  userEmail?: string;
 };
 
 export const categories: ServiceCategory[] = [
@@ -231,6 +232,7 @@ export const mockAppointments: Appointment[] = [
     date: tomorrow.toISOString(),
     status: 'upcoming',
     price: 45,
+    userEmail: 'sarah@example.com',
   },
   {
     id: 'a2',
@@ -239,5 +241,6 @@ export const mockAppointments: Appointment[] = [
     date: lastWeek.toISOString(),
     status: 'completed',
     price: 85,
+    userEmail: 'john@example.com',
   }
 ];
