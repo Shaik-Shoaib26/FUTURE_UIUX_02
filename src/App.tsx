@@ -22,6 +22,10 @@ import { Confirmation } from './pages/Confirmation';
 import { History } from './pages/History';
 import { Profile } from './pages/Profile';
 import { Notifications } from './pages/Notifications';
+import { EditProfile } from './pages/EditProfile';
+import { PaymentMethods } from './pages/PaymentMethods';
+import { Settings } from './pages/Settings';
+import { HelpCenter } from './pages/HelpCenter';
 
 export default function App() {
   return (
@@ -42,6 +46,10 @@ export default function App() {
             <Route path="/book/confirmation" element={<Confirmation />} />
             <Route path="/history" element={<History />} />
             <Route path="/profile" element={<Profile />} />
+            <Route path="/profile/edit" element={<EditProfile />} />
+            <Route path="/profile/payments" element={<PaymentMethods />} />
+            <Route path="/profile/settings" element={<Settings />} />
+            <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/notifications" element={<Notifications />} />
           </Route>
           <Route path="*" element={<Navigate to="/home" replace />} />

@@ -38,15 +38,15 @@ export function Profile() {
         </motion.div>
 
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.1 }} className="bg-white/80 backdrop-blur-md rounded-[28px] shadow-sm hover:shadow-md border border-gray-100 overflow-hidden">
-          <ProfileLink icon={User} title="Edit Profile" />
+          <ProfileLink icon={User} title="Edit Profile" onClick={() => navigate('/profile/edit')} />
           <div className="h-px bg-slate-50 mx-6"></div>
-          <ProfileLink icon={CreditCard} title="Payment Methods" />
+          <ProfileLink icon={CreditCard} title="Payment Methods" onClick={() => navigate('/profile/payments')} />
           <div className="h-px bg-slate-50 mx-6"></div>
-          <ProfileLink icon={Settings} title="Settings" />
+          <ProfileLink icon={Settings} title="Settings" onClick={() => navigate('/profile/settings')} />
         </motion.div>
 
         <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.2 }} className="bg-white/80 backdrop-blur-md rounded-[28px] shadow-sm hover:shadow-md border border-gray-100 overflow-hidden">
-          <ProfileLink icon={HelpCircle} title="Help Center" />
+          <ProfileLink icon={HelpCircle} title="Help Center" onClick={() => navigate('/help-center')} />
           <div className="h-px bg-slate-50 mx-6"></div>
           <ProfileLink icon={Bell} title="Notifications" onClick={() => navigate('/notifications')} />
         </motion.div>
