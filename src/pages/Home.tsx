@@ -61,8 +61,8 @@ export function Home() {
               onClick={() => navigate('/services')}
               className="flex flex-col items-center min-w-[80px]"
             >
-              <div className="w-16 h-16 bg-white rounded-[24px] shadow-sm border border-gray-100 flex items-center justify-center mb-2 active:scale-95 transition hover:shadow-md">
-                <span className="text-2xl font-bold text-primary">{cat.name.charAt(0)}</span>
+              <div className="w-16 h-16 bg-white rounded-[24px] shadow-sm border border-gray-100 flex items-center justify-center mb-2 active:scale-95 transition hover:shadow-md text-2xl">
+                <span>{cat.icon}</span>
               </div>
               <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">{cat.name}</span>
             </motion.div>

@@ -38,12 +38,12 @@ export type Appointment = {
 };
 
 export const categories: ServiceCategory[] = [
-  { id: 'c1', name: 'Haircut', icon: 'Scissors' },
-  { id: 'c2', name: 'Coloring', icon: 'Palette' },
-  { id: 'c3', name: 'Facial', icon: 'Sparkles' },
-  { id: 'c4', name: 'Spa', icon: 'Flower2' },
-  { id: 'c5', name: 'Nails', icon: 'Fingerprint' },
-  { id: 'c6', name: 'Massage', icon: 'Waves' },
+  { id: 'c1', name: 'Haircut', icon: '✂️' },
+  { id: 'c2', name: 'Coloring', icon: '🎨' },
+  { id: 'c3', name: 'Facial', icon: '✨' },
+  { id: 'c4', name: 'Spa', icon: '🧖' },
+  { id: 'c5', name: 'Nails', icon: '💅' },
+  { id: 'c6', name: 'Massage', icon: '💆' },
 ];
 
 export const services: Service[] = [
