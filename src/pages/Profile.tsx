@@ -12,14 +12,9 @@ export function Profile() {
       <div className="bg-white/40 backdrop-blur-md pt-12 pb-24 px-6 md:px-12 rounded-b-[40px] relative border-b border-gray-200/50">
         <h1 className="text-2xl font-bold text-slate-800 mb-6">Profile</h1>
         
-        <div className="flex items-center space-x-4">
-          <div className="w-20 h-20 bg-rose-gold/20 rounded-full p-1 border border-rose-gold/30">
-             <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" alt="Sarah" className="w-full h-full object-cover rounded-full" />
-          </div>
-          <div className="text-slate-800">
-            <h2 className="text-xl font-bold">{currentUser?.name ?? 'Sarah Jenkins'}</h2>
-            <p className="text-slate-500 text-sm">{currentUser?.email ?? 'sarah@example.com'}</p>
-          </div>
+        <div className="text-slate-800">
+          <h2 className="text-xl font-bold">{currentUser?.name ?? 'Sarah Jenkins'}</h2>
+          <p className="text-slate-500 text-sm">{currentUser?.email ?? 'sarah@example.com'}</p>
         </div>
       </div>
 

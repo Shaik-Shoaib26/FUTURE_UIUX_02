@@ -19,8 +19,8 @@ export function Home() {
             <p className="text-slate-500 text-sm mb-1">Good morning, {currentUser?.name ?? 'Sarah'}</p>
             <h1 className="text-slate-800 text-2xl font-extrabold tracking-tight">Ready to glow?</h1>
           </div>
-          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center overflow-hidden border-2 border-white shadow-md">
-            <img src="https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&q=80&w=150" alt="Profile" className="w-full h-full object-cover" />
+          <div className="w-12 h-12 bg-gray-200 rounded-full flex items-center justify-center border-2 border-white shadow-md text-sm font-semibold text-slate-700">
+            {currentUser?.name ? currentUser.name.charAt(0) : 'S'}
           </div>
         </div>
 
