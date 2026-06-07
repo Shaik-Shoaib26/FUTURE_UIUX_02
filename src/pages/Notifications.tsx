@@ -1,15 +1,72 @@
 import { useState } from 'react';
 import { Calendar, Tag, CheckCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { useStore } from '../context/StoreContext';
+import { services, specialists } from '../data/mockData';
 
-const mockNotifications = [
-  { id: '1', title: 'Upcoming Appointment', body: 'Your hair coloring with Elena is tomorrow at 10:00 AM.', type: 'booking', time: '2 hours ago', read: false },
-  { id: '2', title: '20% Off Spa Sessions', body: 'Flash sale! Book any spa session this weekend and get 20% off.', type: 'promo', time: '1 day ago', read: true },
-  { id: '3', title: 'Booking Confirmed', body: 'Your facial with Marcus is confirmed for Oct 12.', type: 'success', time: '3 days ago', read: true },
+type NotificationItem = {
+  id: string;
+  title: string;
+  body: string;
+  type: string;
+  time: string;
+  read?: boolean;
+};
+
+const promoNotifications: NotificationItem[] = [
+  { id: 'p1', title: '20% Off Spa Sessions', body: 'Flash sale! Book any spa session this weekend and get 20% off.', type: 'promo', time: '1 day ago', read: true },
 ];
 
+function formatAppointmentTime(iso: string) {
+  try {
+    const d = new Date(iso);
+    return d.toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+  } catch {
+    return iso;
+  }
+}
+
 export function Notifications() {
-  const [notifications, setNotifications] = useState(mockNotifications);
+  const { appointments, currentUser } = useStore();
+
+  // Build notifications list: user bookings first (booking confirmed + upcoming reminder), then promos
+  const derived: NotificationItem[] = [];
+
+  if (currentUser && appointments.length > 0) {
+    appointments.forEach((app, idx) => {
+      const svc = services.find(s => s.id === app.serviceId);
+      const sp = specialists.find(s => s.id === app.specialistId);
+      const svcName = svc ? svc.name : 'Service';
+      const spName = sp ? sp.name : '';
+      const when = formatAppointmentTime(app.date);
+
+      // Booking confirmed notification
+      derived.push({
+        id: `b-${app.id}`,
+        title: 'Booking Confirmed',
+        body: `${svcName}${spName ? ` with ${spName}` : ''} is confirmed for ${when}.`,
+        type: 'success',
+        time: when,
+        read: app.status !== 'upcoming',
+      });
+
+      // Upcoming appointment reminder (only for upcoming)
+      if (app.status === 'upcoming') {
+        derived.push({
+          id: `u-${app.id}`,
+          title: 'Upcoming Appointment',
+          body: `You have a ${svcName}${spName ? ` with ${spName}` : ''} on ${when}.`,
+          type: 'booking',
+          time: when,
+          read: false,
+        });
+      }
+    });
+  }
+
+  const [notifications, setNotifications] = useState<NotificationItem[]>(() => {
+    return derived.length ? [...derived, ...promoNotifications] : promoNotifications;
+  });
 
   const markAllRead = () => {
     setNotifications(prev => prev.map(n => ({ ...n, read: true })));
@@ -37,7 +94,7 @@ export function Notifications() {
         <AnimatePresence>
           {notifications.map((n, i) => (
             <motion.div
-              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.1 }}
+              initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: i * 0.06 }}
               key={n.id}
               className={`bg-white/80 backdrop-blur-md rounded-[24px] p-4 shadow-sm border border-gray-100 flex items-start space-x-4 relative overflow-hidden transition-shadow hover:shadow-md ${!n.read ? 'ring-1 ring-primary/20' : ''}`}
             >
