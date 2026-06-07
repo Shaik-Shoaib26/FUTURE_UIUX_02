@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { ChevronLeft, Search, Star } from 'lucide-react';
 import { categories, services } from '../data/mockData';
 import { cn } from '../lib/utils';
@@ -7,7 +7,12 @@ import { motion } from 'motion/react';
 
 export function ServicesList() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState(categories[0].id);
+  const location = useLocation();
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    const fromState = (location.state as any)?.categoryId;
+    const fromQuery = new URLSearchParams(location.search).get('category');
+    return (fromState ?? fromQuery) || categories[0].id;
+  });
 
   const filteredServices = services.filter(s => s.categoryId === activeTab);
 

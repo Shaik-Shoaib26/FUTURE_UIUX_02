@@ -58,7 +58,7 @@ export function Home() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
               key={cat.id} 
-              onClick={() => navigate('/services')}
+              onClick={() => navigate('/services', { state: { categoryId: cat.id } })}
               className="flex flex-col items-center min-w-[80px]"
             >
               <div className="w-16 h-16 bg-[#F8F1FF] rounded-[24px] shadow-sm border border-[#E9D5FF] flex items-center justify-center mb-2 active:scale-95 transition hover:shadow-md text-2xl">
