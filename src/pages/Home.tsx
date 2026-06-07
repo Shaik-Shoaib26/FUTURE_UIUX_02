@@ -13,7 +13,7 @@ export function Home() {
   return (
     <div className="flex flex-col pb-20">
       {/* Header */}
-      <div className="bg-white/40 backdrop-blur-md border-b border-gray-200/50 px-6 md:px-12 pt-12 pb-24 rounded-b-[40px] relative">
+      <div className="bg-[#F4EBFF]/70 backdrop-blur-md border-b border-[#E9D5FF]/60 px-6 md:px-12 pt-12 pb-24 rounded-b-[40px] relative">
         <div className="flex justify-between items-center mb-6">
           <div>
             <p className="text-slate-500 text-sm mb-1">Good morning, {currentUser?.name ?? 'Sarah'}</p>
@@ -30,7 +30,7 @@ export function Home() {
         </div>
 
         <div className="absolute -bottom-7 left-6 right-6 md:max-w-md md:left-12">
-          <div className="bg-white rounded-[24px] shadow-sm border border-gray-100 p-2 flex items-center space-x-3 px-4">
+          <div className="bg-[#FAF5FF] rounded-[24px] shadow-sm border border-[#E9D5FF] p-2 flex items-center space-x-3 px-4">
             <Search className="text-slate-400" size={20} />
             <input 
               type="text" 
@@ -61,7 +61,7 @@ export function Home() {
               onClick={() => navigate('/services')}
               className="flex flex-col items-center min-w-[80px]"
             >
-              <div className="w-16 h-16 bg-white rounded-[24px] shadow-sm border border-gray-100 flex items-center justify-center mb-2 active:scale-95 transition hover:shadow-md text-2xl">
+              <div className="w-16 h-16 bg-[#F8F1FF] rounded-[24px] shadow-sm border border-[#E9D5FF] flex items-center justify-center mb-2 active:scale-95 transition hover:shadow-md text-2xl">
                 <span>{cat.icon}</span>
               </div>
               <span className="text-[10px] uppercase font-bold tracking-wider text-slate-500">{cat.name}</span>
@@ -81,11 +81,11 @@ export function Home() {
               transition={{ delay: i * 0.1 + 0.2 }}
               key={service.id}
               onClick={() => navigate(`/services/${service.id}`)}
-              className="min-w-[240px] md:min-w-0 bg-white rounded-[28px] p-4 border border-gray-100 shadow-sm active:scale-95 transition hover:shadow-md cursor-pointer"
+              className="min-w-[240px] md:min-w-0 bg-[#FBF2FF] rounded-[28px] p-4 border border-[#E9D5FF] shadow-sm active:scale-95 transition hover:shadow-md cursor-pointer"
             >
               <div className="w-full h-32 rounded-2xl overflow-hidden mb-3 relative">
                 <img src={service.imageUrl} alt={service.name} className="w-full h-full object-cover" />
-                <div className="absolute top-2 right-2 bg-white/90 backdrop-blur px-2 py-1 rounded-lg flex items-center space-x-1">
+                <div className="absolute top-2 right-2 bg-[#F8F1FF]/90 backdrop-blur px-2 py-1 rounded-lg flex items-center space-x-1">
                   <Star size={12} className="text-yellow-400 fill-yellow-400" />
                   <span className="text-xs font-bold">{service.rating}</span>
                 </div>
@@ -105,7 +105,7 @@ export function Home() {
         </div>
         <div className="flex flex-col space-y-4 md:grid md:grid-cols-2 lg:grid-cols-3 md:space-y-0 md:gap-6 mb-4">
           {specialists.slice(0, 3).map((spec) => (
-            <div key={spec.id} className="bg-white rounded-[28px] p-5 flex items-center space-x-4 border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            <div key={spec.id} className="bg-[#FBF2FF] rounded-[28px] p-5 flex items-center space-x-4 border border-[#E9D5FF] shadow-sm hover:shadow-md transition-shadow">
               <div className="w-20 h-20 rounded-full bg-rose-gold/20 p-1 ring-2 ring-rose-gold/20 flex-shrink-0">
                 <img src={spec.imageUrl} alt={spec.name} className="w-full h-full rounded-full object-cover" />
               </div>

@@ -21,7 +21,7 @@ export function Splash() {
         transition={{ duration: 0.8, ease: 'easeOut' }}
         className="flex flex-col items-center text-white"
       >
-        <div className="bg-white/10 p-6 rounded-[32px] backdrop-blur-md mb-6 shadow-2xl border border-white/20">
+        <div className="bg-[#F7F0FF]/20 p-6 rounded-[32px] backdrop-blur-md mb-6 shadow-2xl border border-[#E9D5FF]/40">
           <Logo />
         </div>
         <p className="text-primary-100 font-medium mt-4">Premium Salon & Spa</p>
