@@ -206,6 +206,17 @@ export const specialists: Specialist[] = [
     servicesOffered: ['s2'],
   },
   {
+    id: 'sp4',
+    name: 'Daniel Park',
+    role: 'Barber',
+    experience: '6 Years',
+    rating: 4.7,
+    reviewsCount: 128,
+    imageUrl: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&q=80&w=200',
+    about: 'Specialist in precision cuts for men and gentle, patient stylings for kids. Daniel combines classic barber techniques with modern finishing.',
+    servicesOffered: ['s11', 's12'],
+  },
+  {
     id: 'sp3',
     name: 'Sarah Jenkins',
     role: 'Massage & Nail Therapist',
