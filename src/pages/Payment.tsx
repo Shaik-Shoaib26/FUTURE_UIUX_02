@@ -22,6 +22,7 @@ export function Payment() {
   const { currentUser, addAppointment } = useStore();
   const [selectedMethod, setSelectedMethod] = useState<'card' | 'apple' | 'phonepe' | 'googlepay' | 'paytm' | 'cash'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
   const pendingAppointment = location.state as PaymentState | null;
 
   useEffect(() => {
@@ -30,11 +31,13 @@ export function Payment() {
     }
   }, [pendingAppointment, navigate]);
 
-  const handlePay = () => {
+  const handlePay = async () => {
     if (!pendingAppointment) return;
     setIsProcessing(true);
-    setTimeout(() => {
-      addAppointment({
+    setErrorMessage('');
+
+    try {
+      await addAppointment({
         serviceId: pendingAppointment.serviceId,
         specialistId: pendingAppointment.specialistId,
         date: pendingAppointment.date,
@@ -47,7 +50,11 @@ export function Payment() {
         userEmail: currentUser?.email ?? pendingAppointment.email,
       });
       navigate('/book/confirmation', { replace: true });
-    }, 1200);
+    } catch (error) {
+      console.error('Booking failed:', error);
+      setErrorMessage('Unable to complete booking. Please try again in a moment.');
+      setIsProcessing(false);
+    }
   };
 
   return (
@@ -64,6 +71,12 @@ export function Payment() {
       <div className="p-6 md:p-12 mb-32 md:max-w-2xl md:mx-auto w-full flex-1">
         <h2 className="font-bold text-slate-800 mb-4">Select Payment Method</h2>
         
+        {errorMessage ? (
+          <div className="mb-6 rounded-3xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+            {errorMessage}
+          </div>
+        ) : null}
+
         <div className="space-y-3 mb-8">
           <button 
             onClick={() => setSelectedMethod('card')}

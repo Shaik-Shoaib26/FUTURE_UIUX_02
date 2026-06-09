@@ -12,8 +12,8 @@ export function Confirmation() {
 
   const latestAppt = [...bookings]
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
-  const service = services.find(s => s.id === latestAppt?.serviceId);
-  const specialist = specialists.find(s => s.id === latestAppt?.specialistId);
+  const serviceName = latestAppt?.serviceName || services.find((s) => s.id === latestAppt?.serviceId)?.name;
+  const specialistName = latestAppt?.specialistName || specialists.find((s) => s.id === latestAppt?.specialistId)?.name;
 
   useEffect(() => {
     if (!latestAppt) {
@@ -21,7 +21,7 @@ export function Confirmation() {
     }
   }, [latestAppt, navigate]);
 
-  if (!latestAppt || !service || !specialist) return null;
+  if (!latestAppt) return null;
 
   return (
     <div className="flex flex-col bg-primary min-h-[100dvh] relative overflow-hidden">
@@ -50,22 +50,22 @@ export function Confirmation() {
           transition={{ delay: 0.2 }}
           className="w-full md:max-w-md bg-white rounded-3xl p-6 shadow-xl text-slate-800"
         >
-          <p className="text-sm text-slate-400 font-medium mb-1">Booking ID: {latestAppt.id}</p>
-          <h2 className="text-xl font-bold mb-6 pb-4 border-b border-slate-100">{service.name}</h2>
+          <p className="text-sm text-slate-400 font-medium mb-1">Booking ID: {latestAppt.bookingId ?? latestAppt.id}</p>
+          <h2 className="text-xl font-bold mb-6 pb-4 border-b border-slate-100">{serviceName}</h2>
           
           <div className="space-y-4 mb-6">
             <div className="flex items-center space-x-3">
               <Calendar className="text-primary opacity-70" size={20} />
               <div>
                 <p className="font-bold text-slate-800">{format(new Date(latestAppt.date), 'EEEE, MMM dd')}</p>
-                <p className="text-xs text-slate-500">{format(new Date(latestAppt.date), 'hh:mm a')}</p>
+                <p className="text-xs text-slate-500">{latestAppt.time || format(new Date(latestAppt.date), 'hh:mm a')}</p>
               </div>
             </div>
             <div className="flex items-center space-x-3">
               <MapPin className="text-primary opacity-70" size={20} />
               <div>
-                <p className="font-bold text-slate-800">Hindupur, Andhra Pradesh</p>
-                <p className="text-xs text-slate-500">Hindupur, Andhra Pradesh</p>
+                <p className="font-bold text-slate-800">{specialistName}</p>
+                <p className="text-xs text-slate-500">{latestAppt.email}</p>
               </div>
             </div>
           </div>

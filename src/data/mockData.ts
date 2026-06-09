@@ -30,9 +30,13 @@ export type Specialist = {
 
 export type Appointment = {
   id: string;
+  bookingId?: string;
   serviceId: string;
   specialistId: string;
+  serviceName?: string;
+  specialistName?: string;
   date: string; // ISO string
+  time?: string;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   price: number;
   customerName: string;

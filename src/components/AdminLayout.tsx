@@ -45,8 +45,8 @@ export function AdminLayout() {
             </nav>
 
             <motion.div initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} className="mt-10 rounded-[28px] bg-primary/5 border border-primary/10 p-5 text-sm text-slate-700">
-              <h3 className="font-bold text-slate-900 mb-2">Live data synced</h3>
-              <p>All bookings are stored in localStorage and your dashboard updates instantly when customers book appointments.</p>
+              <h3 className="font-bold text-slate-900 mb-2">Live Firestore sync</h3>
+              <p>All bookings are stored in Firestore and your admin dashboard updates in real time when customers confirm appointments.</p>
             </motion.div>
           </aside>
 

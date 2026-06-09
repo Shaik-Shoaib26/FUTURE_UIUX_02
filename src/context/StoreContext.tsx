@@ -1,6 +1,12 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Appointment } from '../data/mockData';
-import { getBookings, saveBookings } from '../lib/bookingService';
+import {
+  BookingInput,
+  createBooking,
+  deleteBooking as deleteBookingFirestore,
+  getBookingsRealtime,
+  updateBookingStatus as updateBookingStatusFirestore,
+} from '../lib/bookingService';
 
 type User = {
   name: string;
@@ -16,7 +22,7 @@ type AuthResult = {
 type StoreContextType = {
   bookings: Appointment[];
   appointments: Appointment[];
-  addAppointment: (appointment: Omit<Appointment, 'id' | 'createdAt' | 'status'> & { status?: Appointment['status'] }) => Appointment;
+  addAppointment: (appointment: BookingInput) => Promise<Appointment>;
   updateBookingStatus: (id: string, status: Appointment['status']) => void;
   cancelAppointment: (id: string) => void;
   deleteBooking: (id: string) => void;
@@ -32,7 +38,7 @@ const USERS_KEY = 'glownflow_users';
 const CURRENT_USER_KEY = 'glownflow_current_user';
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [bookings, setBookings] = useState<Appointment[]>(() => getBookings());
+  const [bookings, setBookings] = useState<Appointment[]>([]);
   const [users, setUsers] = useState<User[]>(() => {
     const stored = localStorage.getItem(USERS_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -43,8 +49,9 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    saveBookings(bookings);
-  }, [bookings]);
+    const unsubscribe = getBookingsRealtime(setBookings);
+    return unsubscribe;
+  }, []);
 
   useEffect(() => {
     localStorage.setItem(USERS_KEY, JSON.stringify(users));
@@ -58,24 +65,25 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [currentUser]);
 
-  const addAppointment = (appointment: Omit<Appointment, 'id' | 'createdAt' | 'status'> & { status?: Appointment['status'] }) => {
-    const newAppointment: Appointment = {
-      ...appointment,
-      id: `a${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      status: appointment.status ?? 'confirmed',
-    };
-    setBookings((prev) => [...prev, newAppointment]);
+  const addAppointment = async (appointment: BookingInput) => {
+    const newAppointment = await createBooking(appointment);
+    setBookings((prev) => [newAppointment, ...prev.filter((booking) => booking.id !== newAppointment.id)]);
     return newAppointment;
   };
 
   const updateBookingStatus = (id: string, status: Appointment['status']) => {
+    updateBookingStatusFirestore(id, status).catch((error) => {
+      console.error('Failed to update booking status:', error);
+    });
     setBookings((prev) => prev.map((booking) => (booking.id === id ? { ...booking, status } : booking)));
   };
 
   const cancelAppointment = (id: string) => updateBookingStatus(id, 'cancelled');
 
   const deleteBooking = (id: string) => {
+    deleteBookingFirestore(id).catch((error) => {
+      console.error('Failed to delete booking:', error);
+    });
     setBookings((prev) => prev.filter((booking) => booking.id !== id));
   };
 

@@ -60,7 +60,8 @@ export function AdminAppointments() {
       </div>
 
       <div className="overflow-hidden rounded-[32px] border border-gray-200 bg-white shadow-sm">
-        <div className="grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1fr_1fr] gap-4 px-6 py-4 text-xs uppercase tracking-[0.25em] text-slate-500 bg-slate-50">
+        <div className="grid grid-cols-[1.2fr_1.5fr_1.4fr_1fr_1fr_1fr_1fr] gap-4 px-6 py-4 text-xs uppercase tracking-[0.25em] text-slate-500 bg-slate-50">
+          <span>Booking ID</span>
           <span>Customer</span>
           <span>Service / Specialist</span>
           <span>Date</span>
@@ -76,14 +77,15 @@ export function AdminAppointments() {
               const service = services.find((s) => s.id === booking.serviceId);
               const specialist = specialists.find((sp) => sp.id === booking.specialistId);
               return (
-                <motion.div key={booking.id} layout className="grid grid-cols-[1.5fr_1.5fr_1fr_1fr_1fr_1fr] gap-4 rounded-[28px] border border-gray-100 bg-slate-50 p-4 items-center">
+                <motion.div key={booking.id} layout className="grid grid-cols-[1.2fr_1.5fr_1.4fr_1fr_1fr_1fr_1fr] gap-4 rounded-[28px] border border-gray-100 bg-slate-50 p-4 items-center">
+                  <div className="font-semibold text-slate-900 truncate">{booking.bookingId || booking.id}</div>
                   <div>
                     <p className="font-semibold text-slate-900">{booking.customerName}</p>
                     <p className="text-xs text-slate-500">{booking.email} · {booking.phoneNumber}</p>
                   </div>
                   <div>
-                    <p className="font-semibold text-slate-900">{service?.name || 'Unknown'}</p>
-                    <p className="text-xs text-slate-500">{specialist?.name || 'Unknown'}</p>
+                    <p className="font-semibold text-slate-900">{service?.name || booking.serviceName || 'Unknown'}</p>
+                    <p className="text-xs text-slate-500">{specialist?.name || booking.specialistName || 'Unknown'}</p>
                   </div>
                   <div className="text-slate-600 text-sm">{format(parseISO(booking.date), 'MMM dd, yyyy')}</div>
                   <div className="text-slate-600 text-sm">{format(parseISO(booking.date), 'hh:mm a')}</div>
