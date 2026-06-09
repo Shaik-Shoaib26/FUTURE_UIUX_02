@@ -93,7 +93,7 @@ export function Home() {
               <h3 className="font-bold text-slate-800 mb-1 truncate">{service.name}</h3>
               <div className="flex justify-between items-center">
                 <p className="text-slate-500 text-sm">{service.duration} min</p>
-                <p className="text-primary font-bold">${service.price}</p>
+                <p className="text-primary font-bold">₹{service.price}</p>
               </div>
             </motion.div>
           ))}

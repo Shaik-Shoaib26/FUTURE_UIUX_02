@@ -75,7 +75,7 @@ export function ServicesList() {
                     <span className="font-bold text-slate-700">{service.rating}</span>
                     <span>({service.reviewsCount})</span>
                   </div>
-                  <p className="text-primary font-bold">${service.price}</p>
+                  <p className="text-primary font-bold">₹{service.price}</p>
                 </div>
               </div>
             </motion.div>

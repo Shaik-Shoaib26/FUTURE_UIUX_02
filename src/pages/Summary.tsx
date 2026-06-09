@@ -46,7 +46,7 @@ export function Summary() {
             <img src={service.imageUrl} alt={service.name} className="w-20 h-20 rounded-2xl object-cover" />
             <div>
               <h3 className="font-bold text-slate-800">{service.name}</h3>
-              <p className="text-primary font-bold mt-1">${service.price}</p>
+              <p className="text-primary font-bold mt-1">₹{service.price}</p>
             </div>
           </div>
           <div className="flex justify-between items-center text-sm text-slate-600">
@@ -92,15 +92,15 @@ export function Summary() {
           <h3 className="font-bold text-slate-800 mb-4">Payment Summary</h3>
           <div className="flex justify-between text-slate-600 mb-2 text-sm">
             <span>Subtotal</span>
-            <span className="font-medium text-slate-800">${service.price}</span>
+            <span className="font-medium text-slate-800">₹{service.price}</span>
           </div>
           <div className="flex justify-between text-slate-600 mb-4 text-sm pb-4 border-b border-slate-100">
             <span>Taxes & Fees</span>
-            <span className="font-medium text-slate-800">$5.00</span>
+            <span className="font-medium text-slate-800">₹5.00</span>
           </div>
           <div className="flex justify-between font-bold text-lg text-slate-800">
             <span>Total</span>
-            <span className="text-primary">${service.price + 5}</span>
+            <span className="text-primary">₹{service.price + 5}</span>
           </div>
         </div>
       </div>

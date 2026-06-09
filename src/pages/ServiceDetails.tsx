@@ -47,7 +47,7 @@ export function ServiceDetails() {
             <span className="font-medium text-slate-700">{service.duration} mins</span>
           </div>
           <div className="flex items-center space-x-2 bg-primary-50 px-4 py-3 rounded-2xl border border-primary-100 flex-1 justify-center">
-            <span className="font-bold text-primary text-lg">${service.price}</span>
+            <span className="font-bold text-primary text-lg">₹{service.price}</span>
           </div>
         </div>
 
