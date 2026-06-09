@@ -83,7 +83,7 @@ export const services: Service[] = [
   },
   {
     id: 's4',
-    categoryId: 'c1',
+    categoryId: 'c3',
     name: 'Bridal Hair & Makeup',
     duration: 150,
     price: 250,
