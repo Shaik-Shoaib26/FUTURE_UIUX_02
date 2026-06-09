@@ -8,10 +8,10 @@ import { format } from 'date-fns';
 
 export function Confirmation() {
   const navigate = useNavigate();
-  const { appointments } = useStore();
-  
-  // Get the most recently added appointment
-  const latestAppt = appointments[appointments.length - 1];
+  const { bookings } = useStore();
+
+  const latestAppt = [...bookings]
+    .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())[0];
   const service = services.find(s => s.id === latestAppt?.serviceId);
   const specialist = specialists.find(s => s.id === latestAppt?.specialistId);
 
@@ -50,7 +50,7 @@ export function Confirmation() {
           transition={{ delay: 0.2 }}
           className="w-full md:max-w-md bg-white rounded-3xl p-6 shadow-xl text-slate-800"
         >
-          <p className="text-sm text-slate-400 font-medium mb-1">Booking ID: #GLW{Math.floor(Math.random() * 90000) + 10000}</p>
+          <p className="text-sm text-slate-400 font-medium mb-1">Booking ID: {latestAppt.id}</p>
           <h2 className="text-xl font-bold mb-6 pb-4 border-b border-slate-100">{service.name}</h2>
           
           <div className="space-y-4 mb-6">

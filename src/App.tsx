@@ -26,6 +26,11 @@ import { EditProfile } from './pages/EditProfile';
 import { PaymentMethods } from './pages/PaymentMethods';
 import { Settings } from './pages/Settings';
 import { HelpCenter } from './pages/HelpCenter';
+import { AdminLayout } from './components/AdminLayout';
+import { AdminDashboard } from './pages/admin/AdminDashboard';
+import { AdminAppointments } from './pages/admin/AdminAppointments';
+import { AdminCustomers } from './pages/admin/AdminCustomers';
+import { AdminRevenue } from './pages/admin/AdminRevenue';
 
 export default function App() {
   return (
@@ -51,6 +56,12 @@ export default function App() {
             <Route path="/profile/settings" element={<Settings />} />
             <Route path="/help-center" element={<HelpCenter />} />
             <Route path="/notifications" element={<Notifications />} />
+          </Route>
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="appointments" element={<AdminAppointments />} />
+            <Route path="customers" element={<AdminCustomers />} />
+            <Route path="revenue" element={<AdminRevenue />} />
           </Route>
           <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>

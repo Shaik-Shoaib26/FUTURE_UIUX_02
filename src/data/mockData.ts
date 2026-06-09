@@ -33,8 +33,13 @@ export type Appointment = {
   serviceId: string;
   specialistId: string;
   date: string; // ISO string
-  status: 'upcoming' | 'completed' | 'cancelled';
+  status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   price: number;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
+  duration: number;
+  createdAt: string;
   userEmail?: string;
 };
 
@@ -235,23 +240,4 @@ tomorrow.setDate(tomorrow.getDate() + 1);
 const lastWeek = new Date(today);
 lastWeek.setDate(lastWeek.getDate() - 7);
 
-export const mockAppointments: Appointment[] = [
-  {
-    id: 'a1',
-    serviceId: 's1',
-    specialistId: 'sp1',
-    date: tomorrow.toISOString(),
-    status: 'upcoming',
-    price: 45,
-    userEmail: 'sarah@example.com',
-  },
-  {
-    id: 'a2',
-    serviceId: 's2',
-    specialistId: 'sp2',
-    date: lastWeek.toISOString(),
-    status: 'completed',
-    price: 85,
-    userEmail: 'john@example.com',
-  }
-];
+

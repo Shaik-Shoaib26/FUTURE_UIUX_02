@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { Appointment } from '../data/mockData';
+import { getBookings, saveBookings } from '../lib/bookingService';
 
 type User = {
   name: string;
@@ -13,9 +14,12 @@ type AuthResult = {
 };
 
 type StoreContextType = {
+  bookings: Appointment[];
   appointments: Appointment[];
-  addAppointment: (appointment: Omit<Appointment, 'id'>) => void;
+  addAppointment: (appointment: Omit<Appointment, 'id' | 'createdAt' | 'status'> & { status?: Appointment['status'] }) => Appointment;
+  updateBookingStatus: (id: string, status: Appointment['status']) => void;
   cancelAppointment: (id: string) => void;
+  deleteBooking: (id: string) => void;
   currentUser: { name: string; email: string } | null;
   login: (email: string, password: string) => AuthResult;
   signup: (name: string, email: string, password: string) => AuthResult;
@@ -26,13 +30,9 @@ const StoreContext = createContext<StoreContextType | undefined>(undefined);
 
 const USERS_KEY = 'glownflow_users';
 const CURRENT_USER_KEY = 'glownflow_current_user';
-const APPOINTMENTS_KEY = 'glownflow_appointments';
 
 export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [appointments, setAppointments] = useState<Appointment[]>(() => {
-    const stored = localStorage.getItem(APPOINTMENTS_KEY);
-    return stored ? JSON.parse(stored) : [];
-  });
+  const [bookings, setBookings] = useState<Appointment[]>(() => getBookings());
   const [users, setUsers] = useState<User[]>(() => {
     const stored = localStorage.getItem(USERS_KEY);
     return stored ? JSON.parse(stored) : [];
@@ -43,12 +43,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   });
 
   useEffect(() => {
-    localStorage.setItem(USERS_KEY, JSON.stringify(users));
-  }, [users]);
+    saveBookings(bookings);
+  }, [bookings]);
 
   useEffect(() => {
-    localStorage.setItem(APPOINTMENTS_KEY, JSON.stringify(appointments));
-  }, [appointments]);
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+  }, [users]);
 
   useEffect(() => {
     if (currentUser) {
@@ -58,13 +58,25 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     }
   }, [currentUser]);
 
-  const addAppointment = (appointment: Omit<Appointment, 'id'>) => {
-    const newAppointment = { ...appointment, id: `a${Date.now()}`, userEmail: currentUser?.email ?? 'guest' };
-    setAppointments((prev) => [...prev, newAppointment]);
+  const addAppointment = (appointment: Omit<Appointment, 'id' | 'createdAt' | 'status'> & { status?: Appointment['status'] }) => {
+    const newAppointment: Appointment = {
+      ...appointment,
+      id: `a${Date.now()}`,
+      createdAt: new Date().toISOString(),
+      status: appointment.status ?? 'confirmed',
+    };
+    setBookings((prev) => [...prev, newAppointment]);
+    return newAppointment;
   };
 
-  const cancelAppointment = (id: string) => {
-    setAppointments((prev) => prev.map((app) => (app.id === id ? { ...app, status: 'cancelled' } : app)));
+  const updateBookingStatus = (id: string, status: Appointment['status']) => {
+    setBookings((prev) => prev.map((booking) => (booking.id === id ? { ...booking, status } : booking)));
+  };
+
+  const cancelAppointment = (id: string) => updateBookingStatus(id, 'cancelled');
+
+  const deleteBooking = (id: string) => {
+    setBookings((prev) => prev.filter((booking) => booking.id !== id));
   };
 
   const login = (email: string, password: string): AuthResult => {
@@ -102,9 +114,12 @@ export const StoreProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   return (
     <StoreContext.Provider
       value={{
-        appointments: appointments.filter((a) => a.userEmail === currentUser?.email),
+        bookings,
+        appointments: bookings.filter((a) => a.userEmail === currentUser?.email),
         addAppointment,
+        updateBookingStatus,
         cancelAppointment,
+        deleteBooking,
         currentUser,
         login,
         signup,

@@ -1,14 +1,17 @@
+import { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { services, specialists } from '../data/mockData';
-import { useStore } from '../context/StoreContext';
 import { ChevronLeft, Calendar as CalendarIcon, MapPin, Clock } from 'lucide-react';
 import { format, parse } from 'date-fns';
 
 export function Summary() {
   const { serviceId, specialistId, date } = useParams();
   const navigate = useNavigate();
-  const service = services.find(s => s.id === serviceId);
-  const specialist = specialists.find(s => s.id === specialistId);
+  const service = services.find((s) => s.id === serviceId);
+  const specialist = specialists.find((s) => s.id === specialistId);
+  const [customerName, setCustomerName] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [email, setEmail] = useState('');
 
   if (!service || !specialist || !date) return null;
 
@@ -17,14 +20,20 @@ export function Summary() {
   const timePart = decodedDateParts[1] || '09:00 AM';
   const dateTime = parse(`${datePart} ${timePart}`, 'yyyy-MM-dd hh:mm a', new Date());
   const displayTime = format(dateTime, 'hh:mm a');
+  const canContinue = customerName.trim() !== '' && phoneNumber.trim() !== '' && email.trim() !== '';
 
   const handlePayment = () => {
+    if (!canContinue) return;
     navigate('/book/payment', {
       state: {
         serviceId: service.id,
         specialistId: specialist.id,
         date: dateTime.toISOString(),
         price: service.price,
+        duration: service.duration,
+        customerName: customerName.trim(),
+        phoneNumber: phoneNumber.trim(),
+        email: email.trim(),
       },
     });
   };
@@ -88,6 +97,39 @@ export function Summary() {
           </div>
         </div>
 
+        <div className="bg-white/80 backdrop-blur-md rounded-[32px] p-6 shadow-xl shadow-purple-900/5 border border-gray-100 mb-6">
+          <h3 className="font-bold text-slate-800 mb-4">Customer Details</h3>
+          <div className="grid gap-4 md:grid-cols-2">
+            <label className="space-y-2 text-sm text-slate-700">
+              <span>Name</span>
+              <input
+                value={customerName}
+                onChange={(e) => setCustomerName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full rounded-3xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+              />
+            </label>
+            <label className="space-y-2 text-sm text-slate-700">
+              <span>Phone</span>
+              <input
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                placeholder="98765 43210"
+                className="w-full rounded-3xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+              />
+            </label>
+            <label className="space-y-2 text-sm text-slate-700 md:col-span-2">
+              <span>Email</span>
+              <input
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="hello@example.com"
+                className="w-full rounded-3xl border border-gray-200 bg-slate-50 px-4 py-3 text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/10"
+              />
+            </label>
+          </div>
+        </div>
+
         <div className="bg-white/80 backdrop-blur-md rounded-[32px] p-6 shadow-xl shadow-purple-900/5 border border-gray-100">
           <h3 className="font-bold text-slate-800 mb-4">Payment Summary</h3>
           <div className="flex justify-between text-slate-600 mb-2 text-sm">
@@ -108,7 +150,12 @@ export function Summary() {
       <div className="fixed bottom-0 left-0 right-0 md:left-0 max-w-md md:max-w-xl mx-auto p-6 bg-white/90 backdrop-blur-md border-t border-gray-200/50 md:border-none md:bottom-6 md:rounded-[32px] md:shadow-xl z-50">
         <button 
           onClick={handlePayment}
-          className="w-full bg-gradient-to-r from-primary to-[#8B5CF6] text-white py-4 rounded-[24px] font-bold shadow-lg shadow-purple-200 hover:scale-[1.02] active:scale-[0.98] transition-all"
+          disabled={!canContinue}
+          className={
+            `w-full py-4 rounded-[24px] font-bold shadow-lg transition-all ${
+              canContinue ? 'bg-gradient-to-r from-primary to-[#8B5CF6] text-white shadow-purple-200 hover:scale-[1.02] active:scale-[0.98]' : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+            }`
+          }
         >
           Proceed to Payment
         </button>

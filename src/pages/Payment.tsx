@@ -10,12 +10,16 @@ type PaymentState = {
   specialistId: string;
   date: string;
   price: number;
+  duration: number;
+  customerName: string;
+  phoneNumber: string;
+  email: string;
 };
 
 export function Payment() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { addAppointment } = useStore();
+  const { currentUser, addAppointment } = useStore();
   const [selectedMethod, setSelectedMethod] = useState<'card' | 'apple' | 'phonepe' | 'googlepay' | 'paytm' | 'cash'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
   const pendingAppointment = location.state as PaymentState | null;
@@ -34,8 +38,13 @@ export function Payment() {
         serviceId: pendingAppointment.serviceId,
         specialistId: pendingAppointment.specialistId,
         date: pendingAppointment.date,
-        status: 'upcoming',
+        status: 'confirmed',
         price: pendingAppointment.price,
+        duration: pendingAppointment.duration,
+        customerName: pendingAppointment.customerName,
+        phoneNumber: pendingAppointment.phoneNumber,
+        email: pendingAppointment.email,
+        userEmail: currentUser?.email ?? pendingAppointment.email,
       });
       navigate('/book/confirmation', { replace: true });
     }, 1200);

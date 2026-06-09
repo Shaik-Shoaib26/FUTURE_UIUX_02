@@ -47,11 +47,10 @@ export function Notifications() {
         body: `${svcName}${spName ? ` with ${spName}` : ''} is confirmed for ${when}.`,
         type: 'success',
         time: when,
-        read: app.status !== 'upcoming',
+        read: app.status !== 'confirmed',
       });
 
-      // Upcoming appointment reminder (only for upcoming)
-      if (app.status === 'upcoming') {
+      if (['pending', 'confirmed'].includes(app.status)) {
         derived.push({
           id: `u-${app.id}`,
           title: 'Upcoming Appointment',
