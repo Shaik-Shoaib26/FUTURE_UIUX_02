@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { services, specialists } from '../data/mockData';
 import { useStore } from '../context/StoreContext';
 import { ChevronLeft, Calendar as CalendarIcon, MapPin, Clock } from 'lucide-react';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 
 export function Summary() {
   const { serviceId, specialistId, date } = useParams();
@@ -12,17 +12,18 @@ export function Summary() {
 
   if (!service || !specialist || !date) return null;
 
-  // Simple split decoding since we encoded it as YYYY-MM-DDTHH:MM AM
   const decodedDateParts = decodeURIComponent(date).split('T');
-  const dateObj = new Date(decodedDateParts[0]);
-  const timeString = decodedDateParts[1] || '09:00 AM';
+  const datePart = decodedDateParts[0];
+  const timePart = decodedDateParts[1] || '09:00 AM';
+  const dateTime = parse(`${datePart} ${timePart}`, 'yyyy-MM-dd hh:mm a', new Date());
+  const displayTime = format(dateTime, 'hh:mm a');
 
   const handlePayment = () => {
     navigate('/book/payment', {
       state: {
         serviceId: service.id,
         specialistId: specialist.id,
-        date: dateObj.toISOString(),
+        date: dateTime.toISOString(),
         price: service.price,
       },
     });
@@ -72,7 +73,7 @@ export function Summary() {
             </div>
             <div>
               <p className="text-xs text-slate-500 mb-0.5">Date & Time</p>
-              <p className="font-bold text-slate-800">{format(dateObj, 'EEEE, MMM dd, yyyy')} at {timeString}</p>
+              <p className="font-bold text-slate-800">{format(dateTime, 'EEEE, MMM dd, yyyy')} at {displayTime}</p>
             </div>
           </div>
 
