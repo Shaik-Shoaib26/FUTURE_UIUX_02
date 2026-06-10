@@ -123,7 +123,7 @@ const generateBookingId = () => {
   return `GLOW-${Date.now().toString().slice(-6)}-${suffix}`;
 };
 
-const sendBookingNotification = async (booking: Appointment) => {
+const sendBookingNotification = (booking: Appointment) => {
   if (!emailjsConfigured) {
     console.warn('EmailJS is not configured. Notification skipped.');
     return;
@@ -146,11 +146,15 @@ const sendBookingNotification = async (booking: Appointment) => {
     message_body: `Booking ID: ${booking.bookingId || booking.id}\n\nCustomer Name: ${booking.customerName}\nPhone Number: ${booking.phoneNumber}\nEmail: ${booking.email}\n\nService: ${booking.serviceName || booking.serviceId}\nSpecialist: ${booking.specialistName || booking.specialistId}\n\nDate: ${format(new Date(booking.date), 'EEEE, MMM dd, yyyy')}\nTime: ${booking.time}\n\nDuration: ${booking.duration} mins\nPrice: ₹${booking.price}\n\nStatus: Confirmed`,
   };
 
-  try {
-    await emailjsSend(EMAILJS_SERVICE_ID!, EMAILJS_TEMPLATE_ID!, templateParams);
-  } catch (error) {
-    console.error('Email notification failed:', error);
-  }
+  // Send email asynchronously without blocking the booking confirmation
+  emailjsSend(EMAILJS_SERVICE_ID!, EMAILJS_TEMPLATE_ID!, templateParams)
+    .then(() => {
+      console.log('Email notification sent successfully for booking:', booking.bookingId);
+    })
+    .catch((error) => {
+      console.error('Email notification failed:', error);
+      // Silently fail - don't block the user experience
+    });
 };
 
 export const createBooking = async (bookingInput: BookingInput): Promise<Appointment> => {
@@ -179,27 +183,38 @@ export const createBooking = async (bookingInput: BookingInput): Promise<Appoint
       id: `local-${Date.now()}`,
     };
     saveLocalBookings([localBooking, ...getLocalBookings()]);
-    await sendBookingNotification(localBooking);
+    sendBookingNotification(localBooking);
     return localBooking;
   }
 
-  const collectionRef = collection(db, APPOINTMENTS_COLLECTION);
-  const docRef = await addDoc(collectionRef, {
-    ...booking,
-    createdAt: serverTimestamp(),
-  });
+  try {
+    const collectionRef = collection(db, APPOINTMENTS_COLLECTION);
+    const docRef = await addDoc(collectionRef, {
+      ...booking,
+      createdAt: serverTimestamp(),
+    });
 
-  const savedBooking = await getBookingById(docRef.id);
-  if (savedBooking) {
-    await sendBookingNotification(savedBooking);
-    return savedBooking;
+    const savedBooking = await getBookingById(docRef.id);
+    if (savedBooking) {
+      sendBookingNotification(savedBooking);
+      return savedBooking;
+    }
+
+    return {
+      ...booking,
+      id: docRef.id,
+      createdAt: new Date().toISOString(),
+    };
+  } catch (error) {
+    console.error('Firestore booking failed, falling back to local storage:', error);
+    const localBooking: Appointment = {
+      ...booking,
+      id: `local-${Date.now()}`,
+    };
+    saveLocalBookings([localBooking, ...getLocalBookings()]);
+    sendBookingNotification(localBooking);
+    return localBooking;
   }
-
-  return {
-    ...booking,
-    id: docRef.id,
-    createdAt: new Date().toISOString(),
-  };
 };
 
 export const updateBookingStatus = async (id: string, status: BookingStatus): Promise<void> => {

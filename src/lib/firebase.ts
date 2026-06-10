@@ -13,7 +13,10 @@ const firebaseConfig = {
 const hasFirebaseConfig =
   typeof firebaseConfig.apiKey === 'string' &&
   typeof firebaseConfig.projectId === 'string' &&
-  typeof firebaseConfig.appId === 'string';
+  typeof firebaseConfig.appId === 'string' &&
+  !firebaseConfig.apiKey.startsWith('your_') &&
+  !firebaseConfig.projectId.startsWith('your_') &&
+  !firebaseConfig.appId.startsWith('your_');
 
 export const firebaseApp = hasFirebaseConfig ? initializeApp(firebaseConfig) : null;
 export const db = hasFirebaseConfig ? getFirestore(firebaseApp!) : null;
