@@ -10,7 +10,7 @@ A modern and elegant mobile-first appointment booking application designed for s
 
 ## 📖 Project Overview
 
-Many local salons and spas still rely on phone calls, WhatsApp messages, or manual registers for appointment management, leading to scheduling conflicts, missed bookings, and poor customer experiences.
+Many local salons and spas still rely on phone calls or manual registers for appointment management, leading to scheduling conflicts, missed bookings, and poor customer experiences.
 
 Glow & Flow provides a digital solution with a seamless appointment booking workflow that helps customers schedule services efficiently while improving business operations.
 

@@ -14,6 +14,7 @@ type PaymentState = {
   customerName: string;
   phoneNumber: string;
   email: string;
+  paymentMethod: string;
 };
 
 export function Payment() {
@@ -48,6 +49,7 @@ export function Payment() {
         phoneNumber: pendingAppointment.phoneNumber,
         email: pendingAppointment.email,
         userEmail: currentUser?.email ?? pendingAppointment.email,
+        paymentMethod: selectedMethod,
       });
       navigate('/book/confirmation', { replace: true });
     } catch (error) {

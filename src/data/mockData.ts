@@ -35,7 +35,7 @@ export type Appointment = {
   specialistId: string;
   serviceName?: string;
   specialistName?: string;
-  date: string; // ISO string
+  date: string;
   time?: string;
   status: 'pending' | 'confirmed' | 'completed' | 'cancelled';
   price: number;
@@ -45,6 +45,7 @@ export type Appointment = {
   duration: number;
   createdAt: string;
   userEmail?: string;
+  paymentMethod?: string;
 };
 
 export const categories: ServiceCategory[] = [

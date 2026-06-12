@@ -39,6 +39,15 @@ export type RevenueSummary = {
   total: number;
 };
 
+const getBookingEffectiveStatus = (booking: Appointment): Appointment['status'] => {
+  if (booking.status === 'cancelled') return 'cancelled';
+  if (booking.status !== 'confirmed') return booking.status;
+  const start = new Date(booking.date).getTime();
+  if (isNaN(start)) return booking.status;
+  const end = start + (booking.duration || 0) * 60000;
+  return end <= Date.now() ? 'completed' : booking.status;
+};
+
 const parseTimestamp = (value: any): string => {
   if (!value) return new Date().toISOString();
   if (value instanceof Timestamp) return value.toDate().toISOString();
@@ -48,7 +57,7 @@ const parseTimestamp = (value: any): string => {
 
 const mapFirestoreBooking = (id: string, data: DocumentData): Appointment => {
   const date = parseTimestamp(data.date);
-  return {
+  const booking: Appointment = {
     id,
     bookingId: data.bookingId || id,
     serviceId: data.serviceId,
@@ -66,6 +75,7 @@ const mapFirestoreBooking = (id: string, data: DocumentData): Appointment => {
     createdAt: parseTimestamp(data.createdAt),
     userEmail: data.userEmail,
   };
+  return { ...booking, status: getBookingEffectiveStatus(booking) };
 };
 
 const getLocalBookings = (): Appointment[] => {
@@ -74,11 +84,13 @@ const getLocalBookings = (): Appointment[] => {
   try {
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return [];
-    return parsed.map((booking) => ({
-      ...booking,
-      bookingId: booking.bookingId || booking.id,
-      time: booking.time || (booking.date ? format(new Date(booking.date), 'hh:mm a') : ''),
-    }));
+    return parsed
+      .map((booking) => ({
+        ...booking,
+        bookingId: booking.bookingId || booking.id,
+        time: booking.time || (booking.date ? format(new Date(booking.date), 'hh:mm a') : ''),
+      }))
+      .map((booking) => ({ ...booking, status: getBookingEffectiveStatus(booking as Appointment) }));
   } catch {
     return [];
   }
@@ -143,7 +155,37 @@ const sendBookingNotification = (booking: Appointment) => {
     price: booking.price,
     status: booking.status,
     to_email: NOTIFICATION_EMAIL,
-    message_body: `Booking ID: ${booking.bookingId || booking.id}\n\nCustomer Name: ${booking.customerName}\nPhone Number: ${booking.phoneNumber}\nEmail: ${booking.email}\n\nService: ${booking.serviceName || booking.serviceId}\nSpecialist: ${booking.specialistName || booking.specialistId}\n\nDate: ${format(new Date(booking.date), 'EEEE, MMM dd, yyyy')}\nTime: ${booking.time}\n\nDuration: ${booking.duration} mins\nPrice: ₹${booking.price}\n\nStatus: Confirmed`,
+    message_body: `Booking ID: ${booking.bookingId || booking.id}\n\nCustomer Name: ${booking.customerName}\nPhone Number: ${booking.phoneNumber}\nEmail: ${booking.email}\n\nService: ${booking.serviceName || booking.serviceId}\nSpecialist: ${booking.specialistName || booking.specialistId}\n\nDate: ${format(new Date(booking.date), 'EEEE, MMM dd, yyyy')}\nTime: ${booking.time}\n\nDuration: ${booking.duration} mins\nPrice: ₹${booking.price}\n\nPayment Method: ${booking.paymentMethod || 'N/A'}\n\nStatus: Confirmed`,
+    payment_method: booking.paymentMethod || 'N/A',
+    paymentMethod: booking.paymentMethod || 'N/A',
+    payment_type: booking.paymentMethod || 'N/A',
+    from_name: booking.customerName,
+    from_email: booking.email,
+    reply_to: booking.email,
+    user_name: booking.customerName,
+    user_email: booking.email,
+    user_phone: booking.phoneNumber,
+    phoneNumber: booking.phoneNumber,
+    phone: booking.phoneNumber,
+    phone_no: booking.phoneNumber,
+    contact_number: booking.phoneNumber,
+    client_name: booking.customerName,
+    client_email: booking.email,
+    client_phone: booking.phoneNumber,
+    bookingId: booking.bookingId || booking.id,
+    service_name: booking.serviceName || booking.serviceId,
+    serviceName: booking.serviceName || booking.serviceId,
+    specialist_name: booking.specialistName || booking.specialistId,
+    specialistName: booking.specialistName || booking.specialistId,
+    appointment_time: booking.time,
+    appointment_date: format(new Date(booking.date), 'EEEE, MMM dd, yyyy'),
+    date_time: `${format(new Date(booking.date), 'EEEE, MMM dd, yyyy')} ${booking.time}`,
+    formatted_date: format(new Date(booking.date), 'EEEE, MMM dd, yyyy'),
+    duration_mins: `${booking.duration} mins`,
+    duration_minutes: `${booking.duration} mins`,
+    price_formatted: `₹${booking.price}`,
+    rupee_price: `₹${booking.price}`,
+    total_price: booking.price,
   };
 
   // Send email asynchronously without blocking the booking confirmation
