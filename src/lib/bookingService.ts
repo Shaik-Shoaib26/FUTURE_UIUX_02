@@ -8,9 +8,9 @@ import { services, specialists } from '../data/mockData';
 const APPOINTMENTS_COLLECTION = 'appointments';
 const LOCAL_BOOKINGS_KEY = 'glownflow_bookings';
 const NOTIFICATION_EMAIL = import.meta.env.VITE_NOTIFICATION_EMAIL ?? 'shaikshoaib436@gmail.com';
-const EMAILJS_USER_ID = import.meta.env.VITE_EMAILJS_USER_ID;
-const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID;
+const EMAILJS_USER_ID = import.meta.env.VITE_EMAILJS_USER_ID ?? 'O8T90na3q7kM3JueJ';
+const EMAILJS_SERVICE_ID = import.meta.env.VITE_EMAILJS_SERVICE_ID ?? 'service_lq2wpd7';
+const EMAILJS_TEMPLATE_ID = import.meta.env.VITE_EMAILJS_TEMPLATE_ID ?? 'template_20bbb1a';
 
 const emailjsConfigured = Boolean(EMAILJS_USER_ID && EMAILJS_SERVICE_ID && EMAILJS_TEMPLATE_ID);
 if (EMAILJS_USER_ID) {
@@ -189,7 +189,17 @@ const sendBookingNotification = async (booking: Appointment): Promise<void> => {
   };
 
   try {
-    await emailjsSend(EMAILJS_SERVICE_ID!, EMAILJS_TEMPLATE_ID!, templateParams);
+    const sendWithRetry = async (attempt: number): Promise<void> => {
+      try {
+        await emailjsSend(EMAILJS_SERVICE_ID!, EMAILJS_TEMPLATE_ID!, templateParams);
+      } catch (error) {
+        if (attempt >= 3) throw error;
+        await new Promise((resolve) => setTimeout(resolve, 700 * attempt));
+        await sendWithRetry(attempt + 1);
+      }
+    };
+
+    await sendWithRetry(1);
     console.log('Email notification sent successfully for booking:', booking.bookingId);
   } catch (error) {
     console.error('Email notification failed:', error);
