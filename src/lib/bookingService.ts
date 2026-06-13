@@ -135,7 +135,7 @@ const generateBookingId = () => {
   return `GLOW-${Date.now().toString().slice(-6)}-${suffix}`;
 };
 
-const sendBookingNotification = (booking: Appointment) => {
+const sendBookingNotification = async (booking: Appointment): Promise<void> => {
   if (!emailjsConfigured) {
     console.warn('EmailJS is not configured. Notification skipped.');
     return;
@@ -188,15 +188,12 @@ const sendBookingNotification = (booking: Appointment) => {
     total_price: booking.price,
   };
 
-  // Send email asynchronously without blocking the booking confirmation
-  emailjsSend(EMAILJS_SERVICE_ID!, EMAILJS_TEMPLATE_ID!, templateParams)
-    .then(() => {
-      console.log('Email notification sent successfully for booking:', booking.bookingId);
-    })
-    .catch((error) => {
-      console.error('Email notification failed:', error);
-      // Silently fail - don't block the user experience
-    });
+  try {
+    await emailjsSend(EMAILJS_SERVICE_ID!, EMAILJS_TEMPLATE_ID!, templateParams);
+    console.log('Email notification sent successfully for booking:', booking.bookingId);
+  } catch (error) {
+    console.error('Email notification failed:', error);
+  }
 };
 
 export const createBooking = async (bookingInput: BookingInput): Promise<Appointment> => {
@@ -225,7 +222,7 @@ export const createBooking = async (bookingInput: BookingInput): Promise<Appoint
       id: `local-${Date.now()}`,
     };
     saveLocalBookings([localBooking, ...getLocalBookings()]);
-    sendBookingNotification(localBooking);
+    await sendBookingNotification(localBooking);
     return localBooking;
   }
 
@@ -238,7 +235,7 @@ export const createBooking = async (bookingInput: BookingInput): Promise<Appoint
 
     const savedBooking = await getBookingById(docRef.id);
     if (savedBooking) {
-      sendBookingNotification(savedBooking);
+      await sendBookingNotification(savedBooking);
       return savedBooking;
     }
 
@@ -254,7 +251,7 @@ export const createBooking = async (bookingInput: BookingInput): Promise<Appoint
       id: `local-${Date.now()}`,
     };
     saveLocalBookings([localBooking, ...getLocalBookings()]);
-    sendBookingNotification(localBooking);
+    await sendBookingNotification(localBooking);
     return localBooking;
   }
 };
