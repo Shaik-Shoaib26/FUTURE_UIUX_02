@@ -1,13 +1,11 @@
-import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, MapPin, ChevronRight, Star } from 'lucide-react';
+import { MapPin, ChevronRight, Star } from 'lucide-react';
 import { categories, services, specialists } from '../data/mockData';
 import { motion } from 'motion/react';
 import { useStore } from '../context/StoreContext';
 
 export function Home() {
   const navigate = useNavigate();
-  const [search, setSearch] = useState('');
   const { currentUser } = useStore();
 
   return (
@@ -29,21 +27,9 @@ export function Home() {
           <span className="text-sm truncate">Hindupur, Andhra Pradesh</span>
         </div>
 
-        <div className="absolute -bottom-7 left-6 right-6 md:max-w-md md:left-12">
-          <div className="bg-[#FAF5FF] rounded-[24px] shadow-sm border border-[#E9D5FF] p-2 flex items-center space-x-3 px-4">
-            <Search className="text-slate-400" size={20} />
-            <input 
-              type="text" 
-              placeholder="Search services..." 
-              className="flex-1 py-2.5 focus:outline-none text-slate-700 bg-transparent text-sm"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-          </div>
-        </div>
       </div>
 
-      <div className="px-6 md:px-12 mt-14">
+      <div className="px-6 md:px-12 mt-6">
         {/* Categories */}
         <div className="flex justify-between items-end mb-4">
           <h2 className="text-xl font-bold text-slate-800">Categories</h2>
