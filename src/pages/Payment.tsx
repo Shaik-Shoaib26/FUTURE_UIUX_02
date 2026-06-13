@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { ChevronLeft, CreditCard, Apple, DollarSign } from 'lucide-react';
+import { ChevronLeft, CreditCard, DollarSign } from 'lucide-react';
 import { motion } from 'motion/react';
 import { cn } from '../lib/utils';
 import { useStore } from '../context/StoreContext';
@@ -21,7 +21,7 @@ export function Payment() {
   const navigate = useNavigate();
   const location = useLocation();
   const { currentUser, addAppointment } = useStore();
-  const [selectedMethod, setSelectedMethod] = useState<'card' | 'apple' | 'phonepe' | 'googlepay' | 'paytm' | 'cash'>('card');
+  const [selectedMethod, setSelectedMethod] = useState<'card' | 'online' | 'cash'>('card');
   const [isProcessing, setIsProcessing] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const pendingAppointment = location.state as PaymentState | null;
@@ -96,56 +96,17 @@ export function Payment() {
           </button>
 
           <button 
-            onClick={() => setSelectedMethod('apple')}
-            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'apple' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
+            onClick={() => setSelectedMethod('online')}
+            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'online' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
           >
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-800">
-                <Apple size={20} />
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-primary">
+                <CreditCard size={20} />
               </div>
-              <span className="font-medium text-slate-800">Apple Pay</span>
+              <span className="font-medium text-slate-800">Online Payment</span>
             </div>
-            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'apple' ? "border-primary" : "border-slate-300")}> 
-              {selectedMethod === 'apple' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-            </div>
-          </button>
-
-          <button 
-            onClick={() => setSelectedMethod('phonepe')}
-            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'phonepe' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-primary font-bold">PP</div>
-              <span className="font-medium text-slate-800">PhonePe</span>
-            </div>
-            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'phonepe' ? "border-primary" : "border-slate-300")}> 
-              {selectedMethod === 'phonepe' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-            </div>
-          </button>
-
-          <button 
-            onClick={() => setSelectedMethod('googlepay')}
-            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'googlepay' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-700 font-bold">G</div>
-              <span className="font-medium text-slate-800">Google Pay</span>
-            </div>
-            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'googlepay' ? "border-primary" : "border-slate-300")}> 
-              {selectedMethod === 'googlepay' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
-            </div>
-          </button>
-
-          <button 
-            onClick={() => setSelectedMethod('paytm')}
-            className={cn("w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all", selectedMethod === 'paytm' ? "border-primary bg-primary-50" : "border-slate-100 bg-white")}
-          >
-            <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-sm text-slate-700 font-bold">PT</div>
-              <span className="font-medium text-slate-800">Paytm</span>
-            </div>
-            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'paytm' ? "border-primary" : "border-slate-300")}> 
-              {selectedMethod === 'paytm' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
+            <div className={cn("w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all", selectedMethod === 'online' ? "border-primary" : "border-slate-300")}> 
+              {selectedMethod === 'online' && <div className="w-2.5 h-2.5 rounded-full bg-primary" />}
             </div>
           </button>
 
@@ -165,14 +126,10 @@ export function Payment() {
           </button>
         </div>
 
-        {['phonepe', 'googlepay', 'paytm'].includes(selectedMethod) && (
+        {selectedMethod === 'online' && (
           <div className="rounded-3xl border border-slate-200 bg-white p-5 space-y-3">
-            <p className="text-slate-600 text-sm font-medium">UPI payment selected.</p>
-            <p className="text-slate-500 text-sm">Use your UPI app to pay with the QR code or UPI ID below.</p>
-            <div className="rounded-2xl bg-slate-50 p-4 text-center text-slate-700">
-              <p className="text-xs uppercase tracking-[0.3em] text-slate-400 mb-2">UPI ID</p>
-              <p className="font-semibold text-slate-800">glownflow@upi</p>
-            </div>
+            <p className="text-slate-600 text-sm font-medium">Online payment selected.</p>
+            <p className="text-slate-500 text-sm">Complete your booking using any supported online payment method.</p>
           </div>
         )}
 
